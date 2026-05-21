@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM4Hardware: Generative AI for Chip Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .poster {
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            margin: -40px -40px 40px -40px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header h2 {
+            font-size: 1.8em;
+            font-weight: 300;
+            opacity: 0.9;
+        }
+
+        .github-info {
+            text-align: center;
+            margin-bottom: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .github-info h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .github-link {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .github-link:hover {
+            color: #667eea;
+        }
+
+        .main-topics {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .topic-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-top: 5px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .topic-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .topic-section.verilog {
+            border-top-color: #4CAF50;
+        }
+
+        .topic-section.security {
+            border-top-color: #FF5722;
+        }
+
+        .topic-section.c2hls {
+            border-top-color: #2196F3;
+        }
+
+        .topic-section h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .topic-section.verilog h3 {
+            color: #4CAF50;
+        }
+
+        .topic-section.security h3 {
+            color: #FF5722;
+        }
+
+        .topic-section.c2hls h3 {
+            color: #2196F3;
+        }
+
+        .project-list {
+            list-style: none;
+        }
+
+        .project-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #ddd;
+        }
+
+        .verilog .project-item {
+            border-left-color: #4CAF50;
+        }
+
+        .security .project-item {
+            border-left-color: #FF5722;
+        }
+
+        .c2hls .project-item {
+            border-left-color: #2196F3;
+        }
+
+        .project-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .project-description {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .project-links {
+            font-size: 0.8em;
+        }
+
+        .project-links a {
+            color: #667eea;
+            text-decoration: none;
+            margin-right: 15px;
+        }
+
+        .project-links a:hover {
+            color: #764ba2;
+        }
+
+        .highlighted-projects {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .highlighted-projects h3 {
+            color: #e65100;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
+
+        .highlight-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .highlight-item h4 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .highlight-item p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .highlight-item .links {
+            font-size: 0.8em;
+        }
+
+        .highlight-item .links a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .stats-section {
+            background: #263238;
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            color: #666;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .main-topics,
+            .highlight-grid,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2.5em;
+            }
+            
+            .poster {
+                padding: 20px;
+                margin: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="poster">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 LLM4Hardware</h1>
+            <h2>Generative AI for Chip Design</h2>
+        </div>
+
+        <!-- GitHub Repository Info -->
+        <div class="github-info">
+            <h3>📦 Repository</h3>
+            <a href="https://github.com/FCHXWH823/LLM4Hardware" class="github-link">
+                github.com/FCHXWH823/LLM4Hardware
+            </a>
+        </div>
+
+        <!-- Highlighted Key Projects -->
+        <div class="highlighted-projects">
+            <h3>🌟 Featured Submodules</h3>
+            <div class="highlight-grid">
+                <div class="highlight-item">
+                    <h4>🔧 AutoChip</h4>
+                    <p>Generate functional Verilog modules from design prompts using LLMs with iterative error feedback</p>
+                    <div class="links">
+                        <a href="https://arxiv.org/abs/2311.04887">📄 Paper</a>
+                        <a href="https://github.com/shailja-thakur/AutoChip.git">💻 Code</a>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <h4>🛡️ Security Assertions</h4>
+                    <p>LLM-generated SystemVerilog assertions for hardware security verification</p>
+                    <div class="links">
+                        <a href="https://arxiv.org/abs/2306.14027">📄 Paper</a>
+                        <a href="#">💻 Code</a>
+                    </div>
+                </div>
+                <div class="highlight-item">
+                    <h4>⚡ C2HLSC</h4>
+                    <p>Bridge software-to-hardware design gap using LLMs to refactor C code for HLS</p>
+                    <div class="links">
+                        <a href="https://arxiv.org/abs/2412.00214">📄 Paper</a>
+                        <a href="https://github.com/Lucaz97/c2hlsc">💻 Code</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Topic Sections -->
+        <div class="main-topics">
+            <!-- LLM4Verilog Generation -->
+            <div class="topic-section verilog">
+                <h3>🔧 LLM4Verilog Generation</h3>
+                <ul class="project-list">
+                    <li class="project-item">
+                        <div class="project-title">AutoChip</div>
+                        <div class="project-description">Functional Verilog generation with LLM feedback</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/abs/2311.04887">📄 Paper</a>
+                            <a href="https://github.com/shailja-thakur/AutoChip.git">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">VeriThoughts</div>
+                        <div class="project-description">Reasoning-based Verilog code generation</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/abs/2505.20302">📄 Paper</a>
+                            <a href="https://github.com/wilyub/VeriThoughts">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">ROME</div>
+                        <div class="project-description">Hierarchical prompting for complex chip design</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/abs/2407.18276">📄 Paper</a>
+                            <a href="https://github.com/ajn313/ROME-LLM/tree/main">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">PrefixLLM</div>
+                        <div class="project-description">LLM-aided prefix circuit design</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/abs/2412.02594">📄 Paper</a>
+                            <a href="https://github.com/FCHXWH823/PrefixGPT">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">Veritas</div>
+                        <div class="project-description">Deterministic Verilog synthesis from CNF</div>
+                        <div class="project-links">
+                            <a href="#">📄 Paper</a>
+                            <a href="#">💻 Code</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- LLM4Security -->
+            <div class="topic-section security">
+                <h3>🛡️ LLM4Security</h3>
+                <ul class="project-list">
+                    <li class="project-item">
+                        <div class="project-title">Security Assertions</div>
+                        <div class="project-description">Hardware assertion generation for security</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/abs/2306.14027">📄 Paper</a>
+                            <a href="#">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">Hybrid-NL2SVA</div>
+                        <div class="project-description">Natural Language to SystemVerilog Assertion</div>
+                        <div class="project-links">
+                            <a href="#">📄 Paper</a>
+                            <a href="https://github.com/FCHXWH823/RAG-aided-Assertion-Generation">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">OpenTitan RAG SVA</div>
+                        <div class="project-description">RAG system for OpenTitan SVA generation</div>
+                        <div class="project-links">
+                            <a href="#">📄 Paper</a>
+                            <a href="https://github.com/AnandMenon12/OpenTitan_RAG_SVAGEN">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">LLMPirate</div>
+                        <div class="project-description">LLMs for black-box hardware IP piracy</div>
+                        <div class="project-links">
+                            <a href="#">📄 Paper</a>
+                            <a href="#">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">FSM Testbench Gen</div>
+                        <div class="project-description">Testbench generation and bug detection</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/html/2406.17132v1">📄 Paper</a>
+                            <a href="https://github.com/jitendra-bhandari/LLM-Aided-Testbench-Generation-for-FSM/">💻 Code</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- LLM4C2HLS -->
+            <div class="topic-section c2hls">
+                <h3>⚡ LLM4C2HLS</h3>
+                <ul class="project-list">
+                    <li class="project-item">
+                        <div class="project-title">C2HLSC</div>
+                        <div class="project-description">Bridge software-to-hardware design gap</div>
+                        <div class="project-links">
+                            <a href="https://arxiv.org/abs/2412.00214">📄 Paper</a>
+                            <a href="https://github.com/Lucaz97/c2hlsc">💻 Code</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">HLS Optimization</div>
+                        <div class="project-description">Automated C-to-HLS code transformation</div>
+                        <div class="project-links">
+                            <a href="#">📄 Slides</a>
+                            <a href="#">💻 Tutorial</a>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-title">Masala-CHAI</div>
+                        <div class="project-description">Large-scale SPICE netlist dataset</div>
+                        <div class="project-links">
+                            <a href="#">📄 Paper</a>
+                            <a href="https://github.com/jitendra-bhandari/Masala-CHAI">💻 Code</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-section">
+            <h3>📊 Repository Statistics</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">12+</div>
+                    <div class="stat-label">Research Projects</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Git Submodules</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Published Papers</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Main Focus Areas</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>🎯 Mission:</strong> Advancing the intersection of Large Language Models and Hardware Design</p>
+            <p><strong>🔬 Research Areas:</strong> Verilog Generation • Security Verification • High-Level Synthesis</p>
+            <p><strong>🌐 Explore:</strong> Tutorials, Colab Scripts, and Interactive Examples Available</p>
+        </div>
+    </div>
+</body>
+</html>
