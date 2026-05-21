@@ -1,0 +1,3 @@
+# Introduction (15-45s)
+
+In today's rapidly evolving semiconductor landscape, Large Language Models are transforming how we approach hardware design, verification, and optimization. Our research spans the entire chip design workflow - from high-level behavioral descriptions to low-level circuit implementations.

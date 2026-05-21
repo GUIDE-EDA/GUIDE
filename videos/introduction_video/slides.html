@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM4Hardware Introduction Slides</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1E3A8A 0%, #111827 100%);
+            color: white;
+            overflow: hidden;
+        }
+        
+        .slide {
+            width: 100vw;
+            height: 100vh;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            position: relative;
+        }
+        
+        .slide.active {
+            display: flex;
+        }
+        
+        .slide h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .slide h2 {
+            font-size: 2.5rem;
+            color: #10B981;
+            margin-bottom: 30px;
+        }
+        
+        .slide h3 {
+            font-size: 1.8rem;
+            color: #F59E0B;
+            margin-bottom: 20px;
+        }
+        
+        .slide p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #10B981;
+            margin-bottom: 40px;
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin-top: 40px;
+        }
+        
+        .component {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #10B981;
+            transition: transform 0.3s ease;
+        }
+        
+        .component:hover {
+            transform: scale(1.05);
+        }
+        
+        .component h4 {
+            color: #F59E0B;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        
+        .flow-step {
+            background: #10B981;
+            color: #111827;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 25px;
+            font-weight: bold;
+            position: relative;
+        }
+        
+        .flow-step::after {
+            content: '↓';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #10B981;
+            font-size: 1.5rem;
+        }
+        
+        .flow-step:last-child::after {
+            display: none;
+        }
+        
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 40px;
+            max-width: 1000px;
+        }
+        
+        .comparison-side {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid;
+        }
+        
+        .traditional {
+            border-color: #EF4444;
+        }
+        
+        .llm-approach {
+            border-color: #10B981;
+        }
+        
+        .metric {
+            background: rgba(16, 185, 129, 0.2);
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #10B981;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .controls button {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .controls button:hover {
+            background: #059669;
+        }
+        
+        .slide-number {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 1rem;
+            color: #6B7280;
+        }
+        
+        .circuit-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-image: 
+                linear-gradient(90deg, #10B981 1px, transparent 1px),
+                linear-gradient(#10B981 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Slide 1: Title -->
+    <div class="slide active">
+        <div class="circuit-pattern"></div>
+        <h1>Generative AI for Chip Design</h1>
+        <p class="subtitle">LLM4Hardware Research Initiative</p>
+        <p>Revolutionizing Hardware Design with Large Language Models</p>
+        <div class="slide-number">1 / 8</div>
+    </div>
+    
+    <!-- Slide 2: Overview -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>Transforming Chip Design with AI</h2>
+        <p>From Natural Language to Functional Hardware</p>
+        <div style="margin-top: 40px;">
+            <div class="metric">🔧 Automated Verilog Generation</div>
+            <div class="metric">🧠 Intelligent Error Correction</div>
+            <div class="metric">⚡ Formal Verification Integration</div>
+            <div class="metric">🎯 Natural Language Interfaces</div>
+        </div>
+        <div class="slide-number">2 / 8</div>
+    </div>
+    
+    <!-- Slide 3: Components -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>Research Components</h2>
+        <div class="component-grid">
+            <div class="component">
+                <h4>AutoChip</h4>
+                <p>Functional Verilog Generation</p>
+            </div>
+            <div class="component">
+                <h4>VeriThoughts</h4>
+                <p>Reasoning & Formal Verification</p>
+            </div>
+            <div class="component">
+                <h4>ROME</h4>
+                <p>Hierarchical Prompting</p>
+            </div>
+            <div class="component">
+                <h4>Veritas</h4>
+                <p>CNF-guided Synthesis</p>
+            </div>
+            <div class="component">
+                <h4>PrefixLLM</h4>
+                <p>Prefix Adder Optimization</p>
+            </div>
+            <div class="component">
+                <h4>C2HLSC</h4>
+                <p>Software-to-Hardware Bridge</p>
+            </div>
+            <div class="component">
+                <h4>NL2SVA</h4>
+                <p>Assertion Generation</p>
+            </div>
+            <div class="component">
+                <h4>LLMPirate</h4>
+                <p>IP Security Analysis</p>
+            </div>
+            <div class="component">
+                <h4>Masala-CHAI</h4>
+                <p>SPICE Dataset Generation</p>
+            </div>
+        </div>
+        <div class="slide-number">3 / 8</div>
+    </div>
+    
+    <!-- Slide 4: Design Flow -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>AI-Enhanced Design Flow</h2>
+        <div class="flow-diagram">
+            <div class="flow-step">Natural Language Input</div>
+            <div class="flow-step">LLM Processing</div>
+            <div class="flow-step">Hardware Generation</div>
+            <div class="flow-step">Formal Verification</div>
+            <div class="flow-step">Error Feedback Loop</div>
+            <div class="flow-step">Optimized Implementation</div>
+        </div>
+        <div class="slide-number">4 / 8</div>
+    </div>
+    
+    <!-- Slide 5: Comparison -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>Innovation Advantages</h2>
+        <div class="comparison">
+            <div class="comparison-side traditional">
+                <h3>Traditional Approach</h3>
+                <p>• Manual HDL coding</p>
+                <p>• Separate verification steps</p>
+                <p>• Expert-only accessibility</p>
+                <p>• Time-intensive debugging</p>
+            </div>
+            <div class="comparison-side llm-approach">
+                <h3>LLM4Hardware Approach</h3>
+                <p>• Natural language input</p>
+                <p>• Integrated verification</p>
+                <p>• Accessible to all skill levels</p>
+                <p>• Automated error correction</p>
+            </div>
+        </div>
+        <div class="slide-number">5 / 8</div>
+    </div>
+    
+    <!-- Slide 6: Impact Metrics -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>Measurable Impact</h2>
+        <div style="margin-top: 40px;">
+            <div class="metric">📈 Design Time Reduction: 60-80%</div>
+            <div class="metric">🔍 Error Detection: 3x Faster</div>
+            <div class="metric">🎓 Accessibility: Non-expert Friendly</div>
+            <div class="metric">✅ Verification: Enhanced Coverage</div>
+        </div>
+        <div class="slide-number">6 / 8</div>
+    </div>
+    
+    <!-- Slide 7: Publications -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>Research Impact</h2>
+        <div style="margin-top: 40px;">
+            <div class="metric">📄 12+ Research Papers Published</div>
+            <div class="metric">🏆 Top-tier Conferences (MLCAD, NeurIPS)</div>
+            <div class="metric">💻 Open Source Implementations</div>
+            <div class="metric">🌍 Growing Community Adoption</div>
+        </div>
+        <div class="slide-number">7 / 8</div>
+    </div>
+    
+    <!-- Slide 8: Call to Action -->
+    <div class="slide">
+        <div class="circuit-pattern"></div>
+        <h2>Join the Future of Chip Design</h2>
+        <p class="subtitle">Explore Our Open Source Tools</p>
+        <div style="margin-top: 40px; font-size: 1.5rem;">
+            <p>🔗 GitHub: FCHXWH823/LLM4Hardware</p>
+            <p>📚 Papers, Code, and Tutorials Available</p>
+            <p>🚀 Start Building with AI Today</p>
+        </div>
+        <div class="slide-number">8 / 8</div>
+    </div>
+    
+    <!-- Navigation Controls -->
+    <div class="controls">
+        <button onclick="previousSlide()">Previous</button>
+        <button onclick="nextSlide()">Next</button>
+        <button onclick="toggleFullscreen()">Fullscreen</button>
+    </div>
+    
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+        
+        function previousSlide() {
+            showSlide(currentSlide - 1);
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                previousSlide();
+            } else if (e.key === 'f' || e.key === 'F11') {
+                e.preventDefault();
+                toggleFullscreen();
+            }
+        });
+        
+        // Auto-advance for demo (optional)
+        // setInterval(nextSlide, 10000); // 10 seconds per slide
+    </script>
+</body>
+</html>
