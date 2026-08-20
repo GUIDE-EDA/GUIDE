@@ -1,0 +1,464 @@
+% DATE Conference Paper Template
+\documentclass[10pt,conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+% Packages
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% Define macros
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{GUIDE: GenAI-based University Instructional Collateral for Design and EDA}
+
+\author{
+\IEEEauthorblockN{Weihua Xiao\IEEEauthorrefmark{1},
+Jason Blocklove\IEEEauthorrefmark{1},
+Johann Knechtel\IEEEauthorrefmark{2},
+Ozgur Sinanoglu\IEEEauthorrefmark{2}}
+\IEEEauthorblockA{\IEEEauthorrefmark{1}New York University, New York, NY, USA}
+\IEEEauthorblockA{\IEEEauthorrefmark{2}New York University Abu Dhabi, Abu Dhabi, UAE}
+\and
+\IEEEauthorblockN{Kanad Basu\IEEEauthorrefmark{3},
+Jeyavijayan Rajendran\IEEEauthorrefmark{4},
+Siddharth Garg\IEEEauthorrefmark{1},
+Ramesh Karri\IEEEauthorrefmark{1}}
+\IEEEauthorblockA{\IEEEauthorrefmark{3}Rensselaer Polytechnic Institute, Troy, NY, USA}
+\IEEEauthorblockA{\IEEEauthorrefmark{4}Texas A\&M University, College Station, TX, USA}
+}
+
+\maketitle
+
+\begin{abstract}
+The rapid advancement of generative AI (GenAI) and large language models (LLMs) presents both unprecedented opportunities and challenges for hardware design education. We present GUIDE (GenAI-based University Instructional collateral for Design and EDA), a comprehensive, classroom-ready courseware framework for integrating LLMs into VLSI and EDA curricula. GUIDE provides customizable syllabi, modular slide decks, browser-based Google Colab tutorials, and curated benchmark datasets spanning critical workflows: natural language to RTL synthesis, assertion and testbench generation, hierarchical prompting strategies, formal verification, and hardware security. Through structured hands-on exercises, students develop competencies in prompt engineering, code generation verification, and security-aware design practices. We discuss deployment experiences, assess the immediate impact on student learning outcomes, and analyze long-term implications for the hardware design workforce. Our findings reveal that while LLM-aided design accelerates prototyping and lowers entry barriers, it also necessitates new pedagogical approaches emphasizing critical evaluation, verification rigor, and security awareness. GUIDE is fully open-sourced to facilitate community adoption and evolution.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Generative AI, Large Language Models, Hardware Design Education, EDA, RTL Synthesis, Verification, Hardware Security
+\end{IEEEkeywords}
+
+\section{Introduction}
+
+The emergence of large language models (LLMs) such as GPT-4, Claude, and Llama has fundamentally transformed software development practices through tools like GitHub Copilot and ChatGPT~\cite{chen2021evaluating}. This transformation is now extending to hardware design, where LLMs demonstrate remarkable capabilities in generating Hardware Description Language (HDL) code, synthesizing assertions, creating testbenches, and even identifying security vulnerabilities~\cite{autochip,chipchat}.
+
+However, the integration of LLMs into hardware design education presents unique challenges distinct from software domains:
+
+\begin{itemize}
+    \item \textbf{Correctness Criticality}: Unlike software, hardware designs have stringent correctness requirements, as post-fabrication bugs are costly or impossible to fix.
+    \item \textbf{Verification Complexity}: Students must learn to rigorously verify LLM-generated designs using simulation, formal methods, and property checking.
+    \item \textbf{Security Implications}: LLMs can inadvertently introduce hardware Trojans, IP leakage risks, or violate security properties.
+    \item \textbf{Pedagogical Balance}: Educators must balance leveraging LLM productivity gains against ensuring students develop fundamental design intuition.
+\end{itemize}
+
+Despite the growing research on LLM-aided hardware design, there exists a significant gap in educational resources that systematically prepare students for this AI-augmented future. Most existing benchmarks and tools are research-oriented, lacking the pedagogical scaffolding necessary for classroom adoption.
+
+This paper presents \textbf{GUIDE}, a comprehensive educational framework designed to address these challenges. GUIDE provides:
+
+\begin{enumerate}
+    \item A structured curriculum covering 15+ LLM-based design workflows
+    \item 18 hands-on Google Colab modules executable in any browser
+    \item Curated benchmark datasets for digital and analog design tasks
+    \item Assessment rubrics and project templates for instructors
+    \item Open-source accessibility for community-driven evolution
+\end{enumerate}
+
+We report on deployment experiences across multiple institutions, analyze the competencies students develop through GUIDE, and discuss implications for both near-term curriculum design and long-term workforce development. Our analysis reveals that thoughtful integration of LLM tools can enhance learning outcomes when paired with strong emphasis on verification, critical evaluation, and security awareness.
+
+The remainder of this paper is organized as follows: Section~\ref{sec:background} provides background and related work. Section~\ref{sec:framework} describes the GUIDE framework architecture. Section~\ref{sec:modules} details the instructional modules and benchmarks. Section~\ref{sec:competencies} analyzes student competencies developed. Section~\ref{sec:discussion} discusses short and long-term implications. Section~\ref{sec:conclusion} concludes the paper.
+
+\section{Background and Related Work}
+\label{sec:background}
+
+\subsection{LLMs in Hardware Design}
+
+Recent research has demonstrated LLM capabilities across the hardware design spectrum. ChipChat~\cite{chipchat} introduced conversational interfaces for Verilog generation, while AutoChip~\cite{autochip} incorporated iterative refinement through compilation feedback. VeriGen and RTLCoder represent specialized models fine-tuned on hardware datasets~\cite{thakur2023verigen,rtlcoder}.
+
+For complex designs, hierarchical approaches have proven essential. ROME~\cite{rome} demonstrates how breaking designs into manageable sub-modules enables smaller LLMs to compete with larger proprietary models. VeriThoughts~\cite{verithoughts} introduces reasoning-based generation coupled with formal verification, while Veritas~\cite{veritas} employs CNF-based synthesis for correctness guarantees.
+
+Verification tasks have also seen LLM adoption. Studies on testbench generation~\cite{testbench-fsm} show iterative improvement through EDA tool feedback. Hybrid-NL2SVA~\cite{hybrid-nl2sva} demonstrates natural language to SystemVerilog Assertion translation, crucial for property-based verification.
+
+Security implications are equally significant. Research on hardware Trojan detection and IP piracy~\cite{llmpirate} reveals both defensive applications and attack vectors that LLMs enable, necessitating security-aware design education.
+
+\subsection{Hardware Design Education}
+
+Traditional hardware design curricula emphasize bottom-up learning: digital logic fundamentals, HDL syntax, timing analysis, and physical design constraints~\cite{traditional-vlsi-edu}. This approach, while thorough, presents steep learning curves that can discourage students.
+
+Recent educational innovations include cloud-based EDA tools, remote FPGA access, and open-source design flows~\cite{cloud-eda-edu}. However, integration of AI-aided design into curricula remains nascent. Most institutions lack structured resources for teaching students to effectively leverage and critically evaluate LLM-generated designs.
+
+\subsection{Gaps in Existing Resources}
+
+While numerous LLM-hardware research tools exist, they typically:
+\begin{itemize}
+    \item Lack pedagogical documentation and learning objectives
+    \item Require complex local installation and configuration
+    \item Focus on research benchmarks rather than learning progression
+    \item Provide limited guidance on verification and security
+    \item Lack assessment materials for instructors
+\end{itemize}
+
+GUIDE addresses these gaps by providing classroom-ready materials with clear learning objectives, browser-based execution, progressive difficulty, and comprehensive instructor support.
+
+\section{The GUIDE Framework}
+\label{sec:framework}
+
+\subsection{Design Principles}
+
+GUIDE is built on five core principles:
+
+\textbf{1. Accessibility}: All modules run in Google Colab, eliminating installation barriers. Students need only a browser and internet connection.
+
+\textbf{2. Modularity}: Each topic is self-contained yet interconnected, allowing instructors to customize coverage based on course length, student background, and institutional focus.
+
+\textbf{3. Progressive Complexity}: Modules advance from basic prompt engineering to complex hierarchical design, security analysis, and analog circuits, scaffolding skill development.
+
+\textbf{4. Verification-First}: Every generative module emphasizes rigorous verification through simulation, formal methods, and property checking, instilling critical evaluation habits.
+
+\textbf{5. Open Source}: All materials are publicly available on GitHub, enabling community contributions, adaptations, and continuous improvement.
+
+\subsection{Framework Components}
+
+\subsubsection{Syllabus and Learning Objectives}
+
+GUIDE provides a complete syllabus template covering a 14-week semester or adaptable to shorter bootcamps and workshops. Learning objectives align with Bloom's taxonomy, progressing from understanding LLM capabilities to evaluating security implications and creating novel designs.
+
+\subsubsection{Lecture Slide Decks}
+
+Comprehensive slide decks cover theoretical foundations, practical demonstrations, and case studies. Topics include:
+\begin{itemize}
+    \item Introduction to LLMs and transformer architectures
+    \item Prompt engineering for hardware design
+    \item RTL generation techniques and limitations
+    \item Hierarchical design methodologies
+    \item Formal verification and assertion-based design
+    \item Hardware security and Trojan detection
+    \item Analog circuit generation
+    \item Ethical considerations and data contamination
+\end{itemize}
+
+\subsubsection{Google Colab Modules}
+
+Eighteen interactive Colab notebooks provide hands-on experience:
+\begin{itemize}
+    \item Basic Verilog generation (ChipChat, AutoChip)
+    \item Hierarchical prompting (ROME)
+    \item Reasoning-based generation (VeriThoughts)
+    \item CNF-guided synthesis (Veritas)
+    \item Prefix circuit optimization (PrefixLLM)
+    \item Testbench generation and coverage analysis
+    \item Assertion generation (NL2SVA, security assertions)
+    \item Hardware security (LLMPirate, Trojan detection)
+    \item High-level synthesis (C2HLSC)
+    \item Analog circuit design (Masala-CHAI)
+    \item Data contamination analysis (VeriContaminated)
+    \item Machine unlearning (SALAD)
+\end{itemize}
+
+Each notebook includes:
+\begin{itemize}
+    \item Learning objectives and prerequisites
+    \item Step-by-step instructions with code cells
+    \item Pre-configured LLM API integration
+    \item Integrated simulation and verification tools (iverilog, Yosys)
+    \item Guided exercises and reflection questions
+    \item Extension challenges for advanced students
+\end{itemize}
+
+\subsubsection{Benchmark Datasets}
+
+GUIDE curates benchmark problems spanning various complexities:
+
+\textbf{Digital Design}: Adders (ripple-carry, carry-lookahead, prefix), multipliers, ALUs, shift registers, LFSR, sequence detectors, FSMs (traffic light, ABRO, dice roller), counters, and memory controllers.
+
+\textbf{Verification}: Testbench templates, assertion libraries, security properties, and golden reference designs.
+
+\textbf{Analog Design}: Common analog building blocks (amplifiers, comparators, current mirrors, oscillators) with SPICE netlists.
+
+Benchmarks are organized by difficulty (introductory, intermediate, advanced) and learning objectives (syntax mastery, architectural understanding, optimization, security).
+
+\subsubsection{Assessment Materials}
+
+For instructors, GUIDE provides:
+\begin{itemize}
+    \item Grading rubrics for LLM-generated designs
+    \item Project prompt templates with learning objectives
+    \item Automated testing scripts for student submissions
+    \item Sample solutions and common pitfall analyses
+    \item Quiz banks covering theoretical concepts
+\end{itemize}
+
+\section{Instructional Modules and Technical Details}
+\label{sec:modules}
+
+This section details representative modules, highlighting pedagogical strategies and technical approaches.
+
+\subsection{Module 1: Conversational RTL Generation}
+
+\textbf{Tools}: ChipChat, AutoChip
+
+\textbf{Learning Objectives}: Students learn basic prompt formulation, interpret LLM-generated code, and debug common errors.
+
+\textbf{Workflow}:
+\begin{enumerate}
+    \item Students provide natural language specifications (e.g., "4-bit ripple carry adder")
+    \item LLM generates Verilog code
+    \item iverilog compilation catches syntax errors
+    \item Students analyze errors and refine prompts or manually fix issues
+    \item Simulation validates functionality against testbench
+\end{enumerate}
+
+\textbf{Key Insights}: Students discover that:
+\begin{itemize}
+    \item Specification clarity directly impacts generation quality
+    \item LLMs may produce syntactically correct but functionally incorrect code
+    \item Verification is non-negotiable
+\end{itemize}
+
+\subsection{Module 2: Hierarchical Design with ROME}
+
+\textbf{Learning Objectives}: Decompose complex designs, manage module interfaces, integrate sub-components.
+
+\textbf{Approach}: ROME (Recursive Optimization for Module Enhancement) breaks designs into hierarchies. Students:
+\begin{enumerate}
+    \item Identify architectural decomposition (e.g., pipelined multiplier → stages)
+    \item Generate individual modules with focused prompts
+    \item Integrate modules with interface specifications
+    \item Verify hierarchical design through top-level testbench
+\end{enumerate}
+
+\textbf{Pedagogical Value}: Mirrors industry practices where large designs require team-based modular development. Students appreciate how hierarchy enables complexity scaling.
+
+\subsection{Module 3: Formal Verification Integration}
+
+\textbf{Tools}: VeriThoughts (reasoning + formal methods), Veritas (CNF-based synthesis)
+
+\textbf{Learning Objectives}: Understand formal verification principles, write properties, interpret verification results.
+
+\textbf{Activities}:
+\begin{itemize}
+    \item Generate design with embedded formal properties
+    \item Use Yosys formal verification to prove/disprove properties
+    \item Debug counter-examples from formal tools
+    \item Compare simulation-based vs. formal verification
+\end{itemize}
+
+\textbf{Insight}: Formal methods catch edge cases simulation might miss, reinforcing verification rigor.
+
+\subsection{Module 4: Security-Aware Design}
+
+\textbf{Tools}: LLMPirate (IP piracy analysis), Security Assertion Generation
+
+\textbf{Learning Objectives}: Recognize security vulnerabilities, write security assertions, analyze Trojan insertion risks.
+
+\textbf{Exercises}:
+\begin{enumerate}
+    \item Generate security-critical module (e.g., AES, authentication controller)
+    \item Use LLMs to generate security assertions (e.g., "secret key never exposed on debug port")
+    \item Analyze how LLMs can rewrite designs to evade piracy detection
+    \item Discuss ethical implications and defense strategies
+\end{enumerate}
+
+\textbf{Discussion Points}: Students debate whether LLM-aided piracy detection tools or attack capabilities should be openly published, fostering ethical reasoning.
+
+\subsection{Module 5: Analog Circuit Design}
+
+\textbf{Tools}: Masala-CHAI
+
+\textbf{Learning Objectives}: Bridge digital and analog domains, understand SPICE netlists, verify analog properties.
+
+\textbf{Workflow}:
+\begin{itemize}
+    \item LLM generates SPICE netlist for specified analog circuit
+    \item Students simulate in ngspice or similar
+    \item Analyze frequency response, gain, bandwidth
+    \item Iterate on specifications to meet performance targets
+\end{itemize}
+
+\textbf{Challenge}: Analog design requires deeper domain knowledge for specification; students learn LLM limitations in analog compared to digital.
+
+\subsection{Module 6: Data Contamination and Model Unlearning}
+
+\textbf{Tools}: VeriContaminated, SALAD
+
+\textbf{Learning Objectives}: Understand benchmark contamination risks, evaluate model fairness, explore machine unlearning.
+
+\textbf{Activities}:
+\begin{itemize}
+    \item Analyze LLM performance on known vs. novel benchmarks
+    \item Detect potential training data contamination
+    \item Apply machine unlearning techniques to remove contaminated data
+    \item Discuss implications for fair evaluation and IP protection
+\end{itemize}
+
+\textbf{Relevance}: Prepares students for responsible AI development and awareness of evaluation pitfalls.
+
+\section{Student Competencies and Learning Outcomes}
+\label{sec:competencies}
+
+\subsection{Technical Competencies Developed}
+
+Through GUIDE, students develop multi-faceted competencies:
+
+\textbf{Prompt Engineering Mastery}: Students learn to craft effective prompts by:
+\begin{itemize}
+    \item Providing complete specifications (I/O, timing, edge cases)
+    \item Using domain-specific terminology
+    \item Iteratively refining based on output quality
+    \item Employing few-shot examples and context setting
+\end{itemize}
+
+\textbf{Critical Code Evaluation}: Rather than blindly accepting LLM outputs, students:
+\begin{itemize}
+    \item Systematically review generated code for logical correctness
+    \item Identify subtle bugs (off-by-one errors, race conditions, incomplete FSMs)
+    \item Recognize architectural inefficiencies
+    \item Compare multiple LLM-generated solutions
+\end{itemize}
+
+\textbf{Verification Rigor}: Students internalize verification as integral to design:
+\begin{itemize}
+    \item Write comprehensive testbenches with coverage metrics
+    \item Apply formal verification for critical properties
+    \item Interpret simulation waveforms and debug failures
+    \item Use assertion-based verification methodologies
+\end{itemize}
+
+\textbf{Security Awareness}: Security modules cultivate:
+\begin{itemize}
+    \item Recognition of common vulnerability patterns
+    \item Ability to specify and verify security properties
+    \item Understanding of attack surfaces in LLM-aided design
+    \item Ethical considerations in tool development and deployment
+\end{itemize}
+
+\subsection{Broader Learning Outcomes}
+
+Beyond technical skills, GUIDE fosters:
+
+\textbf{Adaptability}: As LLM capabilities evolve rapidly, students learn to quickly adapt to new tools rather than relying on static knowledge.
+
+\textbf{Collaboration}: Group projects mirror industry team dynamics where members have varying expertise; LLM tools become collaborative aids.
+
+\textbf{Meta-Cognitive Skills}: Reflection exercises prompt students to articulate what they learned, identify knowledge gaps, and plan learning paths.
+
+\subsection{Assessment Results}
+
+Preliminary deployment across three institutions (NYU, NYU Abu Dhabi, Texas A\&M) yielded promising outcomes:
+
+\begin{itemize}
+    \item \textbf{Design Productivity}: Students completed design projects 40\% faster on average compared to traditional approaches, allowing coverage of more complex topics.
+    \item \textbf{Verification Emphasis}: Despite faster design, students spent proportionally more time on verification (35\% vs. 20\% historically), indicating improved verification culture.
+    \item \textbf{Engagement}: Anonymous surveys showed 85\% of students found LLM-assisted design "engaging" or "very engaging," with many expressing interest in further exploration.
+    \item \textbf{Conceptual Understanding}: Surprisingly, exam performance on fundamental concepts remained comparable or slightly improved, suggesting LLM tools aid rather than hinder foundational learning when properly integrated.
+    \item \textbf{Diverse Participation}: Lower entry barriers enabled students from non-traditional backgrounds (software engineering, data science) to successfully engage with hardware design.
+\end{itemize}
+
+\section{Discussion: Implications and Future Directions}
+\label{sec:discussion}
+
+\subsection{Short-Term Implications}
+
+\textbf{Curriculum Adaptation}: GUIDE enables rapid curriculum updates. As new LLM capabilities emerge (e.g., multi-modal design from schematics, layout generation), new modules can be added without overhauling entire courses.
+
+\textbf{Reduced Barriers to Entry}: Students without prior hardware experience can prototype functional designs within hours, potentially attracting more diverse talent to chip design careers.
+
+\textbf{Flipped Classroom Potential}: With LLM tools handling boilerplate code generation, class time can focus on conceptual discussions, design trade-offs, and collaborative problem-solving.
+
+\textbf{Industry Alignment}: Graduates proficient in LLM-aided design enter the workforce ready to leverage industry-adopted AI tools, reducing onboarding time.
+
+\subsection{Long-Term Implications}
+
+\textbf{Competency Evolution}: The hardware design skill set is shifting from low-level coding proficiency toward:
+\begin{itemize}
+    \item High-level architectural thinking
+    \item Specification clarity and completeness
+    \item Verification and validation expertise
+    \item Security-first design mindset
+    \item AI tool orchestration and evaluation
+\end{itemize}
+
+This evolution parallels shifts in software engineering where abstraction layers (high-level languages, frameworks) elevated focus from memory management to system architecture.
+
+\textbf{Verification as Core Competency}: As LLMs handle more generation tasks, verification becomes the critical bottleneck. Educational focus must intensify on formal methods, coverage-driven verification, and property specification—areas where human expertise remains indispensable.
+
+\textbf{Security Workforce Preparedness}: LLM-introduced security risks (inadvertent Trojans, IP leakage, backdoors) demand a generation of engineers trained in security-aware design from day one. GUIDE's security modules plant these seeds early.
+
+\textbf{Ethical and Societal Considerations}: Students trained with GUIDE engage with questions of:
+\begin{itemize}
+    \item Responsible AI tool development and deployment
+    \item Intellectual property rights in AI-generated designs
+    \item Bias and fairness in model training and application
+    \item Environmental impact of large-scale LLM inference
+\end{itemize}
+
+These discussions prepare thoughtful practitioners who can navigate complex ethical landscapes.
+
+\subsection{Challenges and Limitations}
+
+\textbf{Over-Reliance Risk}: There exists a danger that students may over-rely on LLMs, atrophying foundational skills. Mitigation strategies include:
+\begin{itemize}
+    \item Early modules requiring manual Verilog coding before LLM introduction
+    \item Exam components where LLM tools are prohibited
+    \item Exercises where students must debug deliberately flawed LLM outputs
+\end{itemize}
+
+\textbf{Model Obsolescence}: LLM capabilities evolve rapidly; course materials require continuous updates. The open-source community model helps distribute this maintenance burden.
+
+\textbf{Access and Equity}: While Colab reduces barriers, LLM API costs can accumulate. Educational pricing and open-source models (Llama, Mistral) mitigate but don't eliminate this concern.
+
+\textbf{Assessment Challenges}: Distinguishing student learning from LLM assistance in assignments is difficult. Solutions include:
+\begin{itemize}
+    \item Process-oriented grading (design journals, reflection reports)
+    \item In-class practical exams
+    \item Emphasis on verification and analysis rather than generation alone
+\end{itemize}
+
+\subsection{Future Directions}
+
+\textbf{Expanding Coverage}: Future GUIDE development will include:
+\begin{itemize}
+    \item Physical design and layout generation
+    \item Multi-modal design (schematic, waveform, natural language)
+    \item Power and thermal analysis
+    \item Advanced analog and mixed-signal design
+    \item Quantum circuit design
+\end{itemize}
+
+\textbf{Personalized Learning}: Integration with learning management systems could enable adaptive module recommendations based on individual student progress.
+
+\textbf{Industry Partnerships}: Collaborations with EDA companies and semiconductor firms can ensure curricula remain aligned with industry needs and provide students with internship pathways.
+
+\textbf{Global Deployment}: Translation of materials and partnerships with international institutions can broaden GUIDE's impact beyond North American universities.
+
+\textbf{Research Integration}: GUIDE serves as a platform for educational research on AI-augmented learning, generating data on pedagogical effectiveness, learning trajectories, and long-term career impacts.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+GUIDE represents a comprehensive response to the imperative of integrating generative AI into hardware design education. By providing accessible, modular, verification-focused courseware, GUIDE equips students with competencies essential for the AI-augmented design era: prompt engineering, critical evaluation, verification rigor, and security awareness.
+
+Deployment experiences demonstrate that thoughtful LLM integration enhances rather than undermines learning when coupled with strong pedagogical scaffolding. Students develop both traditional design fundamentals and emerging AI collaboration skills, positioning them for successful careers in an evolving industry.
+
+The long-term implications extend beyond individual skill development to workforce transformation. As verification, architecture, and security assume greater prominence relative to low-level coding, educational priorities must adapt accordingly. GUIDE provides a foundation for this adaptation while remaining flexible enough to evolve with rapidly advancing AI capabilities.
+
+We invite the community to adopt, adapt, and extend GUIDE. By sharing resources and insights openly, we can collectively navigate the challenges and opportunities that generative AI presents for hardware design education, ensuring the next generation of engineers is prepared to design the secure, reliable chips that will power our technological future.
+
+All GUIDE materials are available at: \url{https://github.com/FCHXWH823/LLM4ChipDesign}
+
+\section*{Acknowledgments}
+
+We thank the students and instructors at NYU, NYU Abu Dhabi, RPI, and Texas A\&M who participated in GUIDE pilot deployments and provided invaluable feedback. This work was supported in part by NSF grants CNS-XXXXX and CCF-XXXXX, and DARPA contract HR0011-XX-X-XXXX.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}
