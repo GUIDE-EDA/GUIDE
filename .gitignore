@@ -1,1 +1,5 @@
 .DS_Store
+
+# Local testing sandbox (notebooks + conda env)
+testing/
+
