@@ -1,0 +1,10 @@
+/build/
+/.tools/
+/slides/*.aux
+/slides/*.fdb_latexmk
+/slides/*.fls
+/slides/*.log
+/slides/*.nav
+/slides/*.out
+/slides/*.snm
+/slides/*.toc
