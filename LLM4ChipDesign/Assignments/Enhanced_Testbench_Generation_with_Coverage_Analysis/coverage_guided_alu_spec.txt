@@ -1,0 +1,30 @@
+Coverage-Guided 8-bit ALU - Natural-Language Specification
+
+Inputs:
+- a: 8-bit operand
+- b: 8-bit operand
+- op: 4-bit operation selector
+
+Outputs:
+- y: 8-bit result
+- zero: 1 if y is 0, else 0
+- negative: y[7]
+- carry: carry-out for ADD; for SUB, 1 means no unsigned borrow; 0 otherwise
+- overflow: signed two's-complement overflow for ADD and SUB; 0 otherwise
+
+Operations:
+- op=0x0 ADD: y = a + b
+- op=0x1 SUB: y = a - b
+- op=0x2 AND: y = a & b
+- op=0x3 OR:  y = a | b
+- op=0x4 XOR: y = a ^ b
+- op=0x5 NOT: y = ~a (b is ignored)
+- op=0x6 SLL: y = a << b[2:0]
+- op=0x7 SRL: y = a >> b[2:0]
+- op=0x8 SRA: y = arithmetic right shift of signed a by b[2:0]
+- op=0x9 SLT: signed comparison; y=1 if signed(a) < signed(b), else y=0
+- op=0xA..0xF: y=0, carry=0, overflow=0
+
+Corner cases worth exercising include zero results, negative results, ADD carry-out,
+ADD/SUB signed overflow, SUB borrow/no-borrow, shift amounts 0/1/7, arithmetic right
+shift of negative values, signed SLT around 0x80/0x7F, and unsupported opcodes.
