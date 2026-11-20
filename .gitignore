@@ -6,4 +6,12 @@ testing/
 # Keep LaTeX sources local; publish compiled PDFs only.
 *.tex
 *.sty
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.nav
+*.out
+*.snm
+*.toc
 
