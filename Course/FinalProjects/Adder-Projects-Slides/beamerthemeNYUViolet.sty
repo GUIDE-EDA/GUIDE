@@ -1,0 +1,390 @@
+% =====================================================================
+%  beamerthemeNYUViolet.sty
+%  A clean NYU-violet Beamer theme (16:9, pdfLaTeX-friendly).
+%
+%  Usage:   \usetheme{NYUViolet}
+%  Options: none. Customise via the macros at the bottom of this file:
+%           \nyuschool{...}  \nyucourse{...}
+%  Logo:    drop an official NYU logo next to the .tex as
+%           nyu-logo-white.pdf (title/section slides) and/or
+%           nyu-logo.pdf (footer) and it will be picked up automatically.
+% =====================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemeNYUViolet}[2026/10/15 NYU Violet Beamer theme]
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc,positioning,shapes.geometric,arrows.meta,backgrounds,fit}
+\tikzset{nyu/.style={fill=nyuviolet}}
+
+\RequirePackage{iftex}
+\ifpdftex
+    \RequirePackage{helvet}
+\else
+    \RequirePackage{fontspec}
+    \setsansfont{TeX Gyre Heros}
+\fi
+
+\RequirePackage{xcolor}
+\RequirePackage{ragged2e}
+\RequirePackage{etoolbox}
+
+% Slides read better ragged-right and without hyphenation
+\apptocmd{\frame}{}{\RaggedRight}{}
+\addtobeamertemplate{block begin}{}{\RaggedRight}
+\addtobeamertemplate{block alerted begin}{}{\RaggedRight}
+\addtobeamertemplate{block example begin}{}{\RaggedRight}
+\AtBeginDocument{\hyphenpenalty=10000\exhyphenpenalty=10000}
+
+% ---------------------------------------------------------------------
+%  Palette (NYU brand violet family + two semantic accents)
+% ---------------------------------------------------------------------
+\definecolor{nyuviolet}{HTML}{57068C}   % NYU Violet
+\definecolor{nyudark}{HTML}{330662}     % deep violet
+\definecolor{nyuultra}{HTML}{8900E1}    % ultra violet
+\definecolor{nyulight}{HTML}{AB82C5}    % light violet
+\definecolor{nyutint}{HTML}{F1EAF6}     % very light violet tint
+\definecolor{nyustripe}{HTML}{F7F3FA}
+\definecolor{nyumist}{HTML}{E3D6EC}     % light tint for rules / fills
+\definecolor{nyuink}{HTML}{1F1A24}      % body text
+\definecolor{nyugray}{HTML}{6D6D6D}     % secondary text
+\definecolor{nyurule}{HTML}{D9D4DD}     % hairlines
+\definecolor{bad}{HTML}{FF0000}        % red for 'bad'
+\definecolor{trojan}{HTML}{D1263B}      % malicious / attacker
+\definecolor{trojantint}{HTML}{FBE7EA}
+\definecolor{benign}{HTML}{00806F}      % trusted / defender
+\definecolor{benigntint}{HTML}{E0F2EF}
+
+% ---------------------------------------------------------------------
+%  Tables (tabularray)
+%    \begin{nyutable}{colspec={Q[wd=3cm] X}, column{1}={font=\bfseries}}
+%      Header & Header \\
+%      cell   & cell   \\
+%    \end{nyutable}
+%  Row 1 is the header (bold, violet). Booktabs-weight rules sit above and
+%  below the header and under the last row, and even rows are tinted. The
+%  tint fills each cell edge to edge, so it always lines up with the rules.
+%  Any key can be overridden per table, e.g. rowsep=3pt or row{Z}={fg=trojan}.
+%  Use plain tblr for tables that have no header.
+% ---------------------------------------------------------------------
+\RequirePackage{tabularray}
+% left-aligned cells stay ragged but can still hyphenate
+\RenewDocumentCommand\TblrAlignLeft{}{\RaggedRight}
+\NewTblrEnviron{nyutable}
+\SetTblrInner[nyutable]{
+  colsep=5pt, rowsep=2pt,
+  hline{1,Z}={0.8pt}, hline{2}={0.5pt},
+  row{1}={font=\bfseries, fg=nyuviolet},
+  row{even}={bg=nyutint},
+}
+
+% ---------------------------------------------------------------------
+%  Geometry & fonts
+% ---------------------------------------------------------------------
+\setbeamersize{text margin left=0.75cm, text margin right=0.75cm}
+\usefonttheme{professionalfonts}
+\renewcommand{\familydefault}{\sfdefault}
+\setbeamerfont{normal text}{size=\normalsize}
+\setbeamerfont{frametitle}{size=\Large,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\small,series=\mdseries}
+\setbeamerfont{title}{size=\huge,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large,series=\mdseries}
+\setbeamerfont{author}{size=\normalsize,series=\bfseries}
+\setbeamerfont{institute}{size=\small}
+\setbeamerfont{date}{size=\small}
+\setbeamerfont{footline}{size=\tiny}
+\setbeamerfont{block title}{size=\normalsize,series=\bfseries}
+\setbeamerfont{itemize/enumerate subbody}{size=\small}
+\setbeamerfont{caption}{size=\scriptsize}
+
+\setbeamercolor{normal text}{fg=nyuink,bg=white}
+\setbeamercolor{structure}{fg=nyuviolet}
+\setbeamercolor{alerted text}{fg=trojan}
+\setbeamercolor{example text}{fg=benign}
+\setbeamercolor{frametitle}{fg=nyuviolet}
+\setbeamercolor{framesubtitle}{fg=nyugray}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{subtitle}{fg=nyumist}
+\setbeamercolor{footline}{fg=nyugray}
+\setbeamercolor{block title}{fg=white,bg=nyuviolet}
+\setbeamercolor{block body}{fg=nyuink,bg=nyutint}
+\setbeamercolor{block title alerted}{fg=white,bg=trojan}
+\setbeamercolor{block body alerted}{fg=nyuink,bg=trojantint}
+\setbeamercolor{block title example}{fg=white,bg=benign}
+\setbeamercolor{block body example}{fg=nyuink,bg=benigntint}
+\setbeamercolor{item}{fg=nyuviolet}
+\setbeamercolor{subitem}{fg=nyulight}
+\setbeamercolor{caption name}{fg=nyuviolet}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+\setbeamertemplate{caption}{\insertcaption}
+
+% Bullets: small violet squares, then thin dashes
+\setbeamertemplate{itemize item}{%
+  \raisebox{0.18em}{\tikz\fill[nyuviolet] (0,0) rectangle (0.16,0.16);}}
+\setbeamertemplate{itemize subitem}{%
+  \raisebox{0.25em}{\tikz\fill[nyulight] (0,0) rectangle (0.18,0.045);}}
+\setbeamertemplate{itemize subsubitem}{\textcolor{nyulight}{\tiny$\bullet$}}
+\setbeamertemplate{enumerate item}{%
+  \tikz[baseline=(n.base)]\node[fill=nyuviolet,text=white,inner sep=1.6pt,
+    minimum size=1.15em,font=\scriptsize\bfseries,rounded corners=1pt](n){\insertenumlabel};}
+\setlength{\leftmargini}{1.1em}
+\setlength{\leftmarginii}{1.0em}
+
+% ---------------------------------------------------------------------
+%  Customisable strings
+% ---------------------------------------------------------------------
+\def\nyu@school{NYU Tandon School of Engineering}
+\def\nyu@course{}
+\newcommand{\nyuschool}[1]{\def\nyu@school{#1}}
+\newcommand{\nyucourse}[1]{\def\nyu@course{#1}}
+\newcommand{\insertnyuschool}{\nyu@school}
+\newcommand{\insertnyucourse}{\nyu@course}
+
+% Optional logos (only used when the file exists)
+\newcommand{\nyu@whitelogo}[1]{%
+  \IfFileExists{nyu-logo-white.pdf}{\includegraphics[height=#1]{nyu-logo-white.pdf}}{}}
+\newcommand{\nyu@footlogo}{%
+  \IfFileExists{nyu-logo.pdf}{\includegraphics[height=0.32cm]{nyu-logo.pdf}}{}}
+
+% ---------------------------------------------------------------------
+%  Decorative "circuit traces" motif (used on title + section slides)
+% ---------------------------------------------------------------------
+\newcommand{\nyu@traces}[1]{% #1 = colour
+  \begin{scope}[draw=#1,line width=0.9pt,line cap=round,line join=round]
+    % a handful of routed traces with via pads, anchored to the right edge
+    \foreach \y/\x/\k in {0.9/11.2/0.5, 1.6/12.4/-0.4, 2.4/10.6/0.6,
+                          3.3/12.0/-0.5, 4.1/11.0/0.4, 4.9/12.8/-0.3,
+                          5.8/10.4/0.5, 6.6/11.8/-0.6, 7.5/12.6/0.4, 8.3/11.4/-0.4} {
+      \draw (16.2,\y) -- (\x+1.6,\y) -- (\x+1.2,\y+\k) -- (\x,\y+\k);
+      \filldraw[fill=#1] (\x,\y+\k) circle (0.07);
+    }
+    % a stylised die outline
+    \draw[line width=1.1pt] (13.1,2.9) rectangle (15.3,5.1);
+    \foreach \i in {0,...,6} {
+      \draw (13.25+0.3*\i,2.9) -- (13.25+0.3*\i,2.65);
+      \draw (13.25+0.3*\i,5.1) -- (13.25+0.3*\i,5.35);
+      \draw (13.1,3.05+0.3*\i) -- (12.85,3.05+0.3*\i);
+    }
+  \end{scope}}
+
+% ---------------------------------------------------------------------
+%  Title page
+% ---------------------------------------------------------------------
+\defbeamertemplate*{title page}{nyu}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \clip (current page.south west) rectangle (current page.north east);
+    \fill[nyuviolet] (current page.south west) rectangle (current page.north east);
+    \begin{scope}[shift={(current page.south west)}]
+      \nyu@traces{nyudark}
+      % top band text
+      \node[anchor=north west,text=nyumist,font=\footnotesize\bfseries,
+            inner sep=0pt] at (0.75,8.4) {\MakeUppercase{\insertnyuschool}};
+      \node[anchor=north east,inner sep=0pt] at (15.25,8.5) {\nyu@whitelogo{0.7cm}};
+      % title block
+      \fill[white] (0.75,6.05) rectangle (2.35,6.15);
+      \node[anchor=north west,text width=9.6cm,align=left,inner sep=0pt,
+            text=white,font=\usebeamerfont{title}] (nyutitle) at (0.75,5.65)
+            {\inserttitle\par};
+      \node[anchor=north west,text width=9.6cm,align=left,inner sep=0pt,
+            text=nyumist,font=\usebeamerfont{subtitle}]
+            at ([yshift=-0.38cm]nyutitle.south west)
+            {\insertsubtitle\par};
+      % author / date
+      \node[anchor=south west,text width=9.6cm,align=left,inner sep=0pt,
+            text=white] at (0.75,0.85)
+            {{\usebeamerfont{author}\insertauthor}\\[3pt]
+             {\usebeamerfont{date}\color{nyumist}%
+              \ifx\nyu@course\@empty\else\nyu@course\enspace\textbullet\enspace\fi\insertdate}};
+    \end{scope}
+  \end{tikzpicture}}
+
+\newcommand{\muxfig}[1]{%
+\begin{tikzpicture}[font=\scriptsize,>=Stealth]
+  \draw (0,-1) -- (0,1) -- (0.8,0.6) -- (0.8,-0.6) -- cycle;
+  \node at (0.4,0) {\tiny MUX};
+  \foreach \y/\n in {0.7/A,0.25/B,-0.25/C,-0.7/D}{\draw[->] (-0.6,\y) node[left]{$\n$} -- (0,\y);}
+  \draw[->] (0.25,-1.5) node[below]{$S_1$} -- (0.25,-0.85);
+  \draw[->] (0.55,-1.5) node[below]{$S_2$} -- (0.55,-0.7);
+  \draw[->] (0.8,0) -- (1.4,0) node[right]{$M$};
+  \ifnum#1=1
+    \draw[->,bad] (0.4,1.6) node[above]{$S_3\ldots S_{66}$} -- (0.4,0.8);
+    \node[bad,align=left,font=\tiny,anchor=west] at (0.9,1.25) {payload if\\$S_{3..66}=$ key};
+  \fi
+\end{tikzpicture}}
+% ---------------------------------------------------------------------
+%  Frame title: violet title with a short accent rule beneath
+% ---------------------------------------------------------------------
+\defbeamertemplate*{frametitle}{nyu}{%
+  \vskip0.42cm%
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=0.75cm,rightskip=0.75cm plus1fill]{frametitle}%
+    \usebeamerfont{frametitle}\insertframetitle\par%
+    \ifx\insertframesubtitle\@empty\else%
+      \vskip1pt{\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\par}%
+    \fi%
+    \vskip3pt{\color{nyuviolet}\rule{1.1cm}{2pt}}%
+  \end{beamercolorbox}%
+  \vskip0.05cm}
+
+% ---------------------------------------------------------------------
+%  Footer: hairline, course/school | section | page
+% ---------------------------------------------------------------------
+% Citations: \source{...} anywhere in a frame stores the text, and the
+% footline prints it in a strip reserved on every slide, just above the
+% hairline. Content can never run into it, and it is always in the same place.
+% Keep each one short:  \source{Author et al., Venue Year; ...}
+\newlength{\nyu@footthird}
+\setlength{\nyu@footthird}{\dimexpr(\paperwidth-1.5cm)/3\relax}
+\def\nyu@source{}
+\newcommand{\source}[1]{\gdef\nyu@source{#1}\ignorespaces}
+\newlength{\nyu@sourceht}\setlength{\nyu@sourceht}{7pt}
+\defbeamertemplate*{footline}{nyu}{%
+  \hbox to \paperwidth{\hskip0.75cm%
+    \vbox to \nyu@sourceht{\vfil\hsize=\dimexpr\paperwidth-1.5cm\relax
+      \usebeamerfont{footline}\usebeamercolor[fg]{footline}\raggedright
+      \strut\ifx\nyu@source\@empty\else\nyu@source\fi\par}\hfil}%
+  \global\let\nyu@source\@empty
+  \vskip2.5pt%
+  \hbox to \paperwidth{\hskip0.75cm%
+    {\color{nyurule}\rule{\dimexpr\paperwidth-1.5cm\relax}{0.4pt}}\hfil}%
+  \vskip4pt%
+  % three equal thirds, so the section name is centred on the page itself
+  \hbox to \paperwidth{%
+    \hskip0.75cm%
+    \parbox[c]{\nyu@footthird}{\usebeamerfont{footline}\usebeamercolor[fg]{footline}%
+      \textcolor{nyuviolet}{\textbf{NYU}}\enspace\insertshorttitle}%
+    \parbox[c]{\nyu@footthird}{\centering\usebeamerfont{footline}\usebeamercolor[fg]{footline}%
+      \insertsectionhead}%
+    \parbox[c]{\nyu@footthird}{\raggedleft\usebeamerfont{footline}%
+      \nyu@footlogo\enspace%
+      \textcolor{nyuviolet}{\textbf{\insertframenumber}}\textcolor{nyugray}{\,/\,\inserttotalframenumber}}%
+    \hskip0.75cm}%
+  \vskip0.22cm}
+
+% ---------------------------------------------------------------------
+%  Section divider ("Part N") with agenda listing
+% ---------------------------------------------------------------------
+\newcommand{\nyu@partlabel}{Part}
+\AtBeginSection[]{%
+  {\setbeamertemplate{footline}{}
+   \begin{frame}[plain,noframenumbering]
+   \begin{tikzpicture}[remember picture,overlay]
+     \fill[nyuviolet] (current page.south west) rectangle (current page.north east);
+      \clip (current page.south west) rectangle (current page.north east);
+     \begin{scope}[shift={(current page.south west)}]
+       \nyu@traces{nyudark}
+       \node[anchor=north west,text=nyulight,font=\fontsize{44}{44}\selectfont\bfseries,
+             inner sep=0pt] at (0.75,8.25) {\thesection};
+       \node[anchor=north west,text=nyumist,font=\footnotesize\bfseries,inner sep=0pt]
+             at (0.8,6.55) {\MakeUppercase{\nyu@partlabel\ \thesection\ of \nyu@totalparts}};
+       \node[anchor=north west,text=white,font=\LARGE\bfseries,text width=10.5cm,
+             align=left,inner sep=0pt] (nyusechead) at (0.75,6.1) {\insertsectionhead};
+       % agenda hangs below the title, so it can never run into it
+       \node[anchor=north west,text width=10.5cm,align=left,inner sep=0pt,
+             font=\scriptsize] at ([xshift=0.05cm,yshift=-0.45cm]nyusechead.south west) {\nyu@agenda};
+     \end{scope}
+   \end{tikzpicture}
+   \end{frame}}}
+
+% Agenda shown on section slides: current section bright, others dim.
+\newcommand{\nyu@totalparts}{4}
+\newcommand{\setpartcount}[1]{\renewcommand{\nyu@totalparts}{#1}}
+% Tighten the gap between agenda entries (beamer defaults to 1.5em) so all
+% seven parts fit on the section divider.
+\patchcmd{\beamer@sectionintoc}{\vskip1.5em}{\vskip0.72em}{}{}
+\newcommand{\nyu@agenda}{%
+  \begingroup
+  \setbeamercolor{section in toc}{fg=nyulight}%
+  \setbeamercolor{section in toc shaded}{fg=nyulight}%
+  \setbeamertemplate{section in toc}{%
+    \ifnum\inserttocsectionnumber=\thesection
+      \textcolor{white}{\textbf{\inserttocsectionnumber\quad\inserttocsection}}%
+    \else
+      \textcolor{nyulight}{\inserttocsectionnumber\quad\inserttocsection}%
+    \fi}%
+  \tableofcontents[hideallsubsections]%
+  \endgroup}
+
+% ---------------------------------------------------------------------
+%  Handy styles for slide content
+% ---------------------------------------------------------------------
+\tikzset{
+  nyubox/.style={draw=nyuviolet,fill=nyutint,rounded corners=2pt,line width=0.6pt,
+                 align=center,font=\footnotesize,inner sep=3pt},
+  nyuhead/.style={fill=nyuviolet,text=white,rounded corners=2pt,align=center,
+                  font=\footnotesize\bfseries,inner sep=4pt},
+  troj/.style={draw=trojan,fill=trojantint,rounded corners=2pt,line width=0.7pt,
+               align=center,font=\footnotesize,inner sep=3pt},
+  good/.style={draw=benign,fill=benigntint,rounded corners=2pt,line width=0.6pt,
+               align=center,font=\footnotesize,inner sep=3pt},
+  arr/.style={-{Stealth[length=2.2mm]},line width=0.7pt,color=nyugray},
+}
+
+% A coloured "key idea" strip used at the bottom of slides
+\newcommand{\takeaway}[1]{%
+  \par\vspace{4pt}%
+  \noindent\begin{tikzpicture}
+    \node[fill=nyutint,text width=\dimexpr\linewidth-14.6pt\relax,inner xsep=7pt,inner ysep=5pt,
+          align=left,font=\small] (t) {#1};
+    \fill[nyuviolet] (t.north west) rectangle ([xshift=3pt]t.south west);
+  \end{tikzpicture}\par}
+
+% ---------------------------------------------------------------------
+%  Cards: tcolorbox versions of blocks. Inside a \begin{cardrow}{n} all
+%  cards in the same row get the same height, so grids line up.
+%    \begin{card}{Title} ... \end{card}        violet
+%    \begin{alertcard}{Title} ... \end{alertcard}  red (attacker)
+%    \begin{goodcard}{Title} ... \end{goodcard}    teal (defender)
+%  Optional first argument passes tcolorbox keys, e.g. [fontupper=\footnotesize]
+% ---------------------------------------------------------------------
+\RequirePackage[skins,raster]{tcolorbox}
+\tcbset{
+  nyucardbase/.style={enhanced, arc=2pt, boxrule=0pt, left=5pt, right=5pt,
+    top=3pt, bottom=4pt, toptitle=1.5pt, bottomtitle=1.5pt,
+    fonttitle=\bfseries\normalsize, coltitle=white, colupper=nyuink,
+    fontupper=\small, before upper=\RaggedRight, before skip=0pt, after skip=0pt},
+  nyucard/.style={nyucardbase, colback=nyutint, colframe=nyuviolet, colbacktitle=nyuviolet},
+  nyualert/.style={nyucardbase, colback=trojantint, colframe=trojan, colbacktitle=trojan},
+  nyugood/.style={nyucardbase, colback=benigntint, colframe=benign, colbacktitle=benign},
+}
+\newtcolorbox{card}[2][]{nyucard,title={#2},#1}
+\newtcolorbox{alertcard}[2][]{nyualert,title={#2},#1}
+\newtcolorbox{goodcard}[2][]{nyugood,title={#2},#1}
+\newenvironment{cardrow}[1]{%
+  \begin{tcbraster}[raster columns=#1, raster equal height=rows,
+                    raster column skip=7pt, raster row skip=7pt]}{\end{tcbraster}}
+
+
+% Compact bulleted list for speaker notes: \note{\nmin{2} \begin{nlist}...}
+\newcommand{\nmin}[1]{}% time estimates removed; keep \nmin{} calls as harmless no-ops
+\newenvironment{nlist}{%
+  \begin{itemize}\setlength{\itemsep}{1.5pt}\setlength{\parskip}{0pt}%
+  \setlength{\topsep}{1pt}\setlength{\leftmargini}{1.0em}}{\end{itemize}}
+
+% ---------------------------------------------------------------------
+%  Speaker-notes page: slide thumbnail on the left, notes on the right
+% ---------------------------------------------------------------------
+\setbeamertemplate{note page}{%
+  \ifdefined\NotesPrint
+    % printable handout: slide thumbnail beside the notes
+    \vfill
+    \noindent\hbox to \textwidth{%
+      \parbox[c]{0.47\paperwidth}{\fcolorbox{nyurule}{white}{\insertslideintonotes{0.45}}}%
+      \hfill
+      \parbox[c]{\dimexpr\textwidth-0.47\paperwidth-0.4cm\relax}{\RaggedRight\small
+        {\color{nyuviolet}\bfseries\insertframetitle\par}\vskip6pt
+        \insertnote\par}}%
+    \vfill
+  \else
+    % pympress / second screen: the slide is already on the other half
+    \vskip0.6cm
+    \noindent\hbox to \textwidth{\hskip0.6cm\begin{minipage}{\dimexpr\textwidth-1.2cm\relax}
+      \RaggedRight
+      {\color{nyuviolet}\bfseries\large\insertframetitle\par}\vskip8pt
+      \insertnote\par
+    \end{minipage}\hfil}%
+  \fi}
+
+\mode<all>
+\endinput
+
