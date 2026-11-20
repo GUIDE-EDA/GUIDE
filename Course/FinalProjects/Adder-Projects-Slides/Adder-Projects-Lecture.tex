@@ -8,13 +8,13 @@
 
 \graphicspath{{../Verilog-Adders/docs/diagrams/png/}}
 \hypersetup{
-  pdftitle={Adder Projects: Architecture, Generation, Verification, and Optimization},
-  pdfauthor={Design Project I --- GenAI for Chip Design}
+  pdftitle={Adder Projects: Adder Design, LLM RTL, Test Coverage, and Yosys},
+  pdfauthor={Weihua Xiao, wx2356@nyu.edu}
 }
 
 \title[Adder Projects]{Adder Projects}
-\subtitle{Architecture, LLM-Based RTL Generation,\\Coverage-Driven Verification, and Yosys Optimization}
-\author{Design Project I --- GenAI for Chip Design}
+\subtitle{Adder Design, LLM RTL, Test Coverage, and Yosys}
+\author{\texorpdfstring{Weihua Xiao\\\texttt{wx2356@nyu.edu}}{Weihua Xiao, wx2356@nyu.edu}}
 \date{Fall 2026}
 \nyucourse{GenAI for Chip Design}
 \setpartcount{3}
@@ -33,6 +33,13 @@
 \newcommand{\adderfigure}[1]{%
   \makebox[\linewidth][c]{%
     \includegraphics[width=1.05\linewidth,trim=4bp 42bp 4bp 52bp,clip]{#1}}}
+\newcommand{\ksawidefigure}{%
+  \makebox[\linewidth][c]{%
+    \includegraphics[width=.84\linewidth,trim=4bp 3bp 4bp 28bp,clip]{kogge-stone.png}}}
+\newcommand{\ksalegendfigure}{%
+  \makebox[\linewidth][c]{%
+    \includegraphics[page=5,width=.95\linewidth,trim=80bp 18bp 80bp 164bp,clip]
+      {../Verilog-Adders/docs/diagrams/adder_architectures.pdf}}}
 
 \begin{document}
 
@@ -49,8 +56,8 @@
       \begin{tikzpicture}[x=1cm,y=1cm]
         \foreach \n/\t [count=\i] in
           {1/{Project 1 \& Project 2},
-           2/{Adder architectures},
-           3/{Project 1 requirements}} {
+           2/{Adder designs},
+           3/{Project 1 PDF}} {
           \node[nyuhead,minimum width=.72cm,minimum height=.72cm,font=\small\bfseries]
             (n\i) at (0,-1.25*\i) {\n};
           \node[anchor=west,font=\small,text width=4.7cm]
@@ -62,29 +69,29 @@
     \column{0.51\textwidth}
       \begin{card}[fontupper=\footnotesize]{Goals}
         \begin{itemize}\setlength{\itemsep}{2pt}
-          \item Connect Project 1 verification to Project 2 optimization
-          \item Recognize six carry-computation strategies
-          \item Identify what must survive an 8-to-16-bit scale-up
-          \item Use the Project 1 PDF as the authoritative requirements document
+          \item Link Project 1 tests to Project 2 changes
+          \item Learn six ways to compute carry
+          \item Know what must stay the same from 8 bits to 16 bits
+          \item Use the Project 1 PDF as the main guide
         \end{itemize}
       \end{card}
   \end{columns}
   \vspace{-5pt}
-  \takeaway{{\footnotesize Architecture connects generation, verification, and optimization.}}
+  \takeaway{{\footnotesize Adder structure links RTL, tests, and Yosys changes.}}
 \end{frame}
 
 % =====================================================================
-\section{Project 1 \& Project 2 Overview}
+\section{Project 1 \& Project 2}
 % =====================================================================
 
-\begin{frame}{Two projects, one continuous design trajectory}
+\begin{frame}{How the two projects connect}
   \centering
   \resizebox{.95\textwidth}{!}{%
   \begin{tikzpicture}[node distance=.42cm]
-    \node[pflow,font=\footnotesize] (study) {Study an existing\\8-bit architecture};
-    \node[pflow,font=\footnotesize,right=of study] (spec) {Write a human-authored\\16-bit specification};
-    \node[pflow,font=\footnotesize,right=of spec] (verify) {Generate, repair,\\cover, and verify RTL};
-    \node[pflowtwo,font=\footnotesize,right=.72cm of verify] (opt) {Use Yosys feedback\\to optimize PPA};
+    \node[pflow,font=\footnotesize] (study) {Read an existing\\8-bit adder};
+    \node[pflow,font=\footnotesize,right=of study] (spec) {Write a clear\\16-bit plan};
+    \node[pflow,font=\footnotesize,right=of spec] (verify) {Build, fix,\\and test RTL};
+    \node[pflowtwo,font=\footnotesize,right=.72cm of verify] (opt) {Use Yosys results\\to improve PPA};
     \draw[parr] (study) -- (spec);
     \draw[parr] (spec) -- (verify);
     \draw[parr] (verify) -- (opt);
@@ -96,109 +103,109 @@
 
   \vspace{.27cm}
   \begin{cardrow}{2}
-    \begin{card}[fontupper=\footnotesize]{Project 1 establishes trust}
+    \begin{card}[fontupper=\footnotesize]{Project 1: make it work}
       \begin{itemize}\setlength{\itemsep}{1pt}
-        \item Functional correctness
-        \item Architectural fidelity
-        \item Coverage quality and reproducibility
+        \item Correct outputs
+        \item Correct adder structure
+        \item Good test coverage
       \end{itemize}
     \end{card}
-    \begin{goodcard}[fontupper=\footnotesize]{Project 2 searches for improvement}
+    \begin{goodcard}[fontupper=\footnotesize]{Project 2: make it better}
       \begin{itemize}\setlength{\itemsep}{1pt}
-        \item Area, delay, and balanced objectives
-        \item Iterative LLM--Yosys feedback
-        \item Equivalence and regression verification
+        \item Area and delay goals
+        \item Repeat the LLM--Yosys loop
+        \item Test every RTL change
       \end{itemize}
     \end{goodcard}
   \end{cardrow}
 \end{frame}
 
-\begin{frame}{Project 1: architecture-guided scaling and verification}
+\begin{frame}{Project 1: grow an 8-bit adder to 16 bits}
   \begin{columns}[T,onlytextwidth]
     \column{.57\textwidth}
       \small
       \begin{enumerate}
-        \item \textbf{Understand} one existing 8-bit structural adder.
-        \item \textbf{Specify} how that architecture becomes a 16-bit design.
-        \item \textbf{Generate and repair} RTL using LLM output plus compiler feedback.
-        \item \textbf{Generate stimulus} and refine it using coverage analysis.
-        \item \textbf{Verify} with a Python golden model and self-checking testbench.
-        \item \textbf{Compare} LLM-only tests with coverage-optimized tests.
+        \item \textbf{Read} one existing 8-bit adder.
+        \item \textbf{Plan} how to build the same adder at 16 bits.
+        \item \textbf{Build and fix} RTL with an LLM and compiler messages.
+        \item \textbf{Make tests} and add more tests after reading coverage.
+        \item \textbf{Check} the RTL with a Python model and testbench.
+        \item \textbf{Compare} LLM-only tests with coverage-based tests.
       \end{enumerate}
     \column{.40\textwidth}
-      \begin{card}[fontupper=\footnotesize]{Central requirement}
-        The natural-language specification is a design artifact written from genuine RTL understanding.
+      \begin{card}[fontupper=\footnotesize]{Main rule}
+        Write the design plan yourself after you read and understand the RTL.
       \end{card}
       \vspace{7pt}
-      \begin{alertcard}[fontupper=\footnotesize]{Not acceptable}
-        Replacing a required structural architecture with a one-line behavioral addition.
+      \begin{alertcard}[fontupper=\footnotesize]{Do not do this}
+        Do not replace the required adder structure with one line of "+" RTL.
       \end{alertcard}
   \end{columns}
-  \source{Project 1: Architecture-Guided Adder Scaling, RTL Generation, and Coverage-Driven Verification, Fall 2026.}
+  \source{Project 1 PDF, Fall 2026.}
 \end{frame}
 
-\begin{frame}{Project 2: Yosys-guided PPA optimization}
+\begin{frame}{Project 2: use Yosys to improve PPA}
   \begin{columns}[c,onlytextwidth]
     \column{.56\textwidth}
       \centering
       \begin{tikzpicture}[scale=.84,every node/.style={transform shape},node distance=.45cm and .65cm]
-        \node[pflowtwo] (rtl) {Verified RTL\\and testbench};
-        \node[pflowtwo,right=of rtl] (yosys) {Yosys synthesis\\and PPA report};
-        \node[pflowtwo,below=of yosys] (feedback) {Metrics + failures\\returned to the LLM};
-        \node[pflowtwo,left=of feedback] (candidate) {New architecture\\candidate};
+        \node[pflowtwo] (rtl) {Tested RTL\\and testbench};
+        \node[pflowtwo,right=of rtl] (yosys) {Yosys area\\and delay result};
+        \node[pflowtwo,below=of yosys] (feedback) {Results + errors\\sent to the LLM};
+        \node[pflowtwo,left=of feedback] (candidate) {New RTL\\design};
         \draw[parr] (rtl) -- (yosys);
         \draw[pfeedback] (yosys) -- (feedback);
         \draw[pfeedback] (feedback) -- (candidate);
         \draw[pfeedback] (candidate) -- (rtl);
       \end{tikzpicture}
     \column{.41\textwidth}
-      \begin{goodcard}[fontupper=\scriptsize]{Optimization modes}
-        Area minimization, delay minimization, and balanced exploration.
+      \begin{goodcard}[fontupper=\scriptsize]{Three goals}
+        Smaller area, shorter delay, or a mix of both.
       \end{goodcard}
       \vspace{5pt}
-      \begin{card}[fontupper=\scriptsize]{Evidence}
-        PPA trajectories, architecture explanations, synthesis logs, and best candidates.
+      \begin{card}[fontupper=\scriptsize]{What to save}
+        PPA results, design notes, Yosys logs, and the best RTL.
       \end{card}
       \vspace{5pt}
-      \begin{alertcard}[fontupper=\scriptsize]{Guardrail}
-        Simulation and equivalence checking must confirm that optimization preserves function.
+      \begin{alertcard}[fontupper=\scriptsize]{Safety check}
+        Run simulation and check that old and new RTL give the same outputs.
       \end{alertcard}
   \end{columns}
 \end{frame}
 
-\begin{frame}{Shared quality gates across both projects}
+\begin{frame}{Four checks for both projects}
   \begin{cardrow}{2}
-    \begin{card}{1 --- Function}
+    \begin{card}{1 --- Outputs}
       Does every tested input produce the correct sum and carry?
     \end{card}
-    \begin{card}{2 --- Architecture}
-      Does the RTL preserve the assigned carry mechanism and hierarchy?
+    \begin{card}{2 --- Structure}
+      Does the RTL use the required carry method and module layout?
     \end{card}
-    \begin{goodcard}{3 --- Verification}
-      Did coverage expose untested structures and signal behaviors?
+    \begin{goodcard}{3 --- Tests}
+      Does coverage show any logic or signal that was not tested?
     \end{goodcard}
-    \begin{goodcard}{4 --- Optimization}
-      Are PPA gains reproducible and functionally safe?
+    \begin{goodcard}{4 --- PPA}
+      Can we repeat the PPA result, and do all tests still pass?
     \end{goodcard}
   \end{cardrow}
-  \takeaway{Generated output is untrusted until tools and human reasoning agree.}
+  \takeaway{Do not trust generated RTL until tools and people check it.}
 \end{frame}
 
 % =====================================================================
-\section{Adder Architectures}
+\section{Adder Designs}
 % =====================================================================
 
-\begin{frame}{Architecture landscape}
+\begin{frame}{Adder types}
   \footnotesize
   \begin{nyutable}{colspec={Q[wd=2.55cm] Q[wd=5.2cm] X},
       column{1}={font=\bfseries},rowsep=1pt}
-    Architecture & Carry strategy & Main scaling question \\
-    RCA & Serial full-adder chain & How many stages lie on the longest carry path? \\
-    CLA & Expanded generate/propagate logic & How are higher-order carry equations organized? \\
-    CSA & Compute both carry assumptions, then select & What group size and mux chain are used? \\
-    Carry Skip & Ripple within blocks; bypass propagating blocks & Where are block boundaries and skip conditions? \\
-    Kogge--Stone & Parallel-prefix tree & How many distance-doubling levels are required? \\
-    Hybrid & Compose different carry structures & Where is the boundary, and how is carry handed off? \\
+    Adder & How carry moves & Question for 16 bits \\
+    RCA & One full adder after another & How many carry steps are on the longest path? \\
+    CLA & Generate/propagate logic makes carries together & How are the carry equations grouped? \\
+    CSA & Build two results, then choose one & What group size and mux chain should be used? \\
+    Carry Skip & Ripple in a block, or skip the block & Where are the blocks and skip checks? \\
+    Kogge--Stone & Prefix tree & How many tree levels are needed? \\
+    Hybrid & Use more than one carry method & Where do the two methods meet? \\
   \end{nyutable}
 \end{frame}
 
@@ -207,10 +214,10 @@
     \column{.70\textwidth}
       \adderfigure{ripple-carry.png}
     \column{.28\textwidth}
-      \begin{card}[fontupper=\footnotesize]{What to preserve}
+      \begin{card}[fontupper=\footnotesize]{Key points}
         \textbf{Carry idea:} each stage waits for the previous carry.\par\smallskip
-        \textbf{Trade-off:} small and regular; delay grows linearly.\par\smallskip
-        \textbf{8 $\rightarrow$ 16:} extend the full-adder chain and audit every carry connection.
+        \textbf{Cost:} small and simple, but delay grows with bit width.\par\smallskip
+        \textbf{8 $\rightarrow$ 16:} add more full adders and check every carry link.
       \end{card}
   \end{columns}
   \source{Course/FinalProjects/Verilog-Adders: RCA4.v and RCA8.v.}
@@ -221,10 +228,10 @@
     \column{.70\textwidth}
       \adderfigure{carry-lookahead.png}
     \column{.28\textwidth}
-      \begin{card}[fontupper=\footnotesize]{What to preserve}
+      \begin{card}[fontupper=\footnotesize]{Key points}
         \textbf{Carry idea:} generate/propagate logic forms carries in parallel.\par\smallskip
-        \textbf{Trade-off:} shorter latency; greater fan-in and equation complexity.\par\smallskip
-        \textbf{8 $\rightarrow$ 16:} expand or hierarchically group carry equations without reintroducing ripple behavior.
+        \textbf{Cost:} faster, but it needs more logic and wider inputs.\par\smallskip
+        \textbf{8 $\rightarrow$ 16:} group the carry equations without making a ripple chain.
       \end{card}
   \end{columns}
   \source{Course/FinalProjects/Verilog-Adders: CLA4.v and CLA8.v.}
@@ -235,10 +242,10 @@
     \column{.70\textwidth}
       \adderfigure{carry-select.png}
     \column{.28\textwidth}
-      \begin{card}[fontupper=\footnotesize]{What to preserve}
-        \textbf{Carry idea:} precompute candidates for carry-in 0 and 1, then select.\par\smallskip
-        \textbf{Trade-off:} short selection path; duplicated arithmetic hardware.\par\smallskip
-        \textbf{8 $\rightarrow$ 16:} define group sizes and connect each real carry to the correct mux controls.
+      \begin{card}[fontupper=\footnotesize]{Key points}
+        \textbf{Carry idea:} calculate both carry-in 0 and carry-in 1, then choose.\par\smallskip
+        \textbf{Cost:} fast choice, but it uses two sets of adder logic.\par\smallskip
+        \textbf{8 $\rightarrow$ 16:} choose group sizes and connect each carry to the right mux.
       \end{card}
   \end{columns}
   \source{Course/FinalProjects/Verilog-Adders: CSA4.v and CSA8.v.}
@@ -249,26 +256,25 @@
     \column{.70\textwidth}
       \adderfigure{carry-skip.png}
     \column{.28\textwidth}
-      \begin{card}[fontupper=\footnotesize]{What to preserve}
+      \begin{card}[fontupper=\footnotesize]{Key points}
         \textbf{Carry idea:} ripple inside a block; bypass it when every bit propagates.\par\smallskip
-        \textbf{Trade-off:} moderate cost and faster long-distance carry movement.\par\smallskip
-        \textbf{8 $\rightarrow$ 16:} preserve block boundaries, block-propagate equations, and mux polarity.
+        \textbf{Cost:} medium area; carry can move across a block faster.\par\smallskip
+        \textbf{8 $\rightarrow$ 16:} keep the block size, skip equation, and mux inputs.
       \end{card}
   \end{columns}
   \source{Course/FinalProjects/Verilog-Adders: CSkipA4.v and CSkipA8.v.}
 \end{frame}
 
 \begin{frame}{Kogge--Stone Adder (KSA)}
-  \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \adderfigure{kogge-stone.png}
-    \column{.28\textwidth}
-      \begin{card}[fontupper=\footnotesize]{What to preserve}
-        \textbf{Carry idea:} aligned Square, Big Circle, and Small Circle prefix operators.\par\smallskip
-        \textbf{Trade-off:} logarithmic depth; high wiring density and node count.\par\smallskip
-        \textbf{8 $\rightarrow$ 16:} add the distance-8 prefix level and verify every group boundary.
-      \end{card}
-  \end{columns}
+  \centering
+  \ksawidefigure
+  \source{Course/FinalProjects/Verilog-Adders: KSA4.v and KSA8.v.}
+\end{frame}
+
+\begin{frame}{Kogge--Stone operators}
+  \centering
+  \ksalegendfigure
+  \takeaway{Square uses $a_i,b_i$. Big Circle uses current and previous $P,G$. Small Circle uses current $P,G$.}
   \source{Course/FinalProjects/Verilog-Adders: KSA4.v and KSA8.v.}
 \end{frame}
 
@@ -277,34 +283,34 @@
     \column{.70\textwidth}
       \adderfigure{hybrid.png}
     \column{.28\textwidth}
-      \begin{card}[fontupper=\footnotesize]{What to preserve}
-        \textbf{Carry idea:} combine architectures with an explicit carry handoff.\par\smallskip
-        \textbf{Repository example:} CLA4 low half plus KSA4 high half.\par\smallskip
-        \textbf{8 $\rightarrow$ 16:} state the new partition and preserve boundary-carry semantics.
+      \begin{card}[fontupper=\footnotesize]{Key points}
+        \textbf{Carry idea:} join two adder types with one carry link.\par\smallskip
+        \textbf{Example:} CLA4 for the low half and KSA4 for the high half.\par\smallskip
+        \textbf{8 $\rightarrow$ 16:} choose the split and connect the carry correctly.
       \end{card}
   \end{columns}
   \source{Course/FinalProjects/Verilog-Adders: HA8.v.}
 \end{frame}
 
 % =====================================================================
-\section{Project 1 Requirements: Refer to the PDF}
+\section{Project 1 Details: Use the PDF}
 % =====================================================================
 
-\begin{frame}{The Project 1 PDF is the source of truth}
+\begin{frame}{The Project 1 PDF has all rules}
   \begin{columns}[c,onlytextwidth]
     \column{.40\textwidth}
       \centering
       \fcolorbox{nyurule}{white}{%
         \includegraphics[page=1,height=.53\textheight]{../Verilog Adder Generation.pdf}}
     \column{.56\textwidth}
-      \begin{card}[fontupper=\scriptsize]{Authoritative requirements document}
-        \textbf{Project 1: Architecture-Guided Adder Scaling, RTL Generation, and Coverage-Driven Verification}\par\smallskip
+      \begin{card}[fontupper=\scriptsize]{Main project guide}
+        \textbf{Project 1: Build and Test a 16-bit Adder}\par\smallskip
         \texttt{Course/FinalProjects/}\par
         \texttt{Verilog Adder Generation.pdf}
         \begin{itemize}\setlength{\itemsep}{1pt}
           \item 13 pages, Fall 2026 version
-          \item Authoritative phases, tools, coverage targets, deliverables, and evaluation criteria
-          \item Architecture-specific questions and completion checklist
+          \item Steps, tools, coverage goals, files to submit, and grading rules
+          \item Questions for each adder and a final checklist
         \end{itemize}
       \end{card}
       \vspace{4pt}
@@ -318,20 +324,20 @@
 
 \begin{frame}{Before we open the PDF}
   \begin{cardrow}{2}
-    \begin{card}{Keep these distinctions clear}
+    \begin{card}{Remember these pairs}
       \begin{itemize}\setlength{\itemsep}{3pt}
-        \item Correct arithmetic vs. correct architecture
-        \item Generated stimulus vs. self-checking verification
-        \item Coverage evidence vs. correctness evidence
-        \item Repairing RTL vs. refining tests
+        \item Right answer vs. right adder structure
+        \item Input test data vs. tests that check the answer
+        \item Coverage vs. correct output
+        \item Fixing RTL vs. adding tests
       \end{itemize}
     \end{card}
     \begin{goodcard}{Questions the PDF will answer}
       \begin{itemize}\setlength{\itemsep}{3pt}
-        \item What exactly must be submitted?
-        \item Which artifacts must be preserved?
-        \item What coverage metrics and stopping conditions apply?
-        \item How will the work be evaluated?
+        \item What must be submitted?
+        \item Which files must be kept?
+        \item What are the coverage goals, and when do we stop?
+        \item How will the work be graded?
       \end{itemize}
     \end{goodcard}
   \end{cardrow}
@@ -348,7 +354,7 @@
       at ([xshift=.75cm,yshift=.5cm]current page.west) {Project 1 PDF};
     \node[text=nyumist,font=\small,anchor=north west,text width=10cm]
       at ([xshift=.75cm,yshift=-.35cm]current page.west)
-      {Verilog Adder Generation.pdf \textbullet\ Source of truth for requirements};
+      {Verilog Adder Generation.pdf \textbullet\ Use this file for all project rules};
   \end{tikzpicture}
 \end{frame}}
 
