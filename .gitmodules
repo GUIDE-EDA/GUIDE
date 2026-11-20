@@ -94,3 +94,6 @@
 [submodule "VHDLSuite"]
 	path = VHDLSuite
 	url = https://github.com/NYU-Serendipity-LLM4Coding/VHDLSuite
+[submodule "Course/FinalProjects/Verilog-Adders"]
+	path = Course/FinalProjects/Verilog-Adders
+	url = https://github.com/FCHXWH823/Verilog-Adders.git
