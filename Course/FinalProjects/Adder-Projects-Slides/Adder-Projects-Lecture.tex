@@ -63,6 +63,8 @@
 }
 
 \newcommand{\keylabel}[1]{\par\smallskip{\color{NYUViolet}\bfseries #1}\par\vspace{1pt}}
+\newcommand{\adderfigure}[1]{%
+  \makebox[\linewidth][c]{\includegraphics[width=1.10\linewidth]{#1}}}
 
 \AtBeginSection[]{
   \begin{frame}[plain]
@@ -264,9 +266,9 @@
 
 \begin{frame}[plain]
   \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \includegraphics[width=\linewidth]{ripple-carry.png}
-    \column{.27\textwidth}
+    \column{.72\textwidth}
+      \adderfigure{ripple-carry.png}
+    \column{.25\textwidth}
       \keylabel{Carry idea}
       Each stage waits for the previous stage's carry.
       \keylabel{Trade-off}
@@ -278,9 +280,9 @@
 
 \begin{frame}[plain]
   \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \includegraphics[width=\linewidth]{carry-lookahead.png}
-    \column{.27\textwidth}
+    \column{.72\textwidth}
+      \adderfigure{carry-lookahead.png}
+    \column{.25\textwidth}
       \keylabel{Carry idea}
       Generate and propagate logic forms multiple carries in parallel.
       \keylabel{Trade-off}
@@ -292,9 +294,9 @@
 
 \begin{frame}[plain]
   \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \includegraphics[width=\linewidth]{carry-select.png}
-    \column{.27\textwidth}
+    \column{.72\textwidth}
+      \adderfigure{carry-select.png}
+    \column{.25\textwidth}
       \keylabel{Carry idea}
       Precompute candidates for carry-in 0 and 1, then select.
       \keylabel{Trade-off}
@@ -306,9 +308,9 @@
 
 \begin{frame}[plain]
   \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \includegraphics[width=\linewidth]{carry-skip.png}
-    \column{.27\textwidth}
+    \column{.72\textwidth}
+      \adderfigure{carry-skip.png}
+    \column{.25\textwidth}
       \keylabel{Carry idea}
       Ripple inside a block; bypass it when every bit propagates.
       \keylabel{Trade-off}
@@ -320,9 +322,9 @@
 
 \begin{frame}[plain]
   \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \includegraphics[width=\linewidth]{kogge-stone.png}
-    \column{.27\textwidth}
+    \column{.72\textwidth}
+      \adderfigure{kogge-stone.png}
+    \column{.25\textwidth}
       \keylabel{Carry idea}
       Square, Big Circle, and Small Circle operators form a parallel-prefix tree.
       \keylabel{Trade-off}
@@ -334,9 +336,9 @@
 
 \begin{frame}[plain]
   \begin{columns}[c,onlytextwidth]
-    \column{.70\textwidth}
-      \includegraphics[width=\linewidth]{hybrid.png}
-    \column{.27\textwidth}
+    \column{.72\textwidth}
+      \adderfigure{hybrid.png}
+    \column{.25\textwidth}
       \keylabel{Carry idea}
       Combine architectures with an explicit carry handoff.
       \keylabel{Repository example}
