@@ -3,3 +3,7 @@
 # Local testing sandbox (notebooks + conda env)
 testing/
 
+# Keep LaTeX sources local; publish compiled PDFs only.
+*.tex
+*.sty
+
