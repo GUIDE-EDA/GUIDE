@@ -1,0 +1,3 @@
+# Opening (00-15s)
+
+Welcome to LLM4Hardware - a comprehensive research initiative that's revolutionizing the intersection of artificial intelligence and chip design.

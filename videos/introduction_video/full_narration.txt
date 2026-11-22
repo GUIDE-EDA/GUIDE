@@ -1,0 +1,21 @@
+Welcome to LLM4Hardware - a comprehensive research initiative that's revolutionizing the intersection of artificial intelligence and chip design.
+
+[PAUSE]
+
+In today's rapidly evolving semiconductor landscape, Large Language Models are transforming how we approach hardware design, verification, and optimization. Our research spans the entire chip design workflow - from high-level behavioral descriptions to low-level circuit implementations.
+
+[PAUSE]
+
+LLM4Hardware encompasses twelve cutting-edge research projects, each addressing critical challenges in modern chip design: - **AutoChip** generates functional Verilog modules with automated error correction - **VeriThoughts** enables reasoning-based hardware generation with formal verification - **ROME** introduces hierarchical prompting for complex hardware modules - **Veritas** provides deterministic synthesis through conjunctive normal form - **PrefixLLM** optimizes prefix adder circuits for area and delay - Advanced testbench generation and bug detection for finite-state machines - Natural language to SystemVerilog assertion translation - Security-focused assertion generation - RAG-enhanced SVA generation for OpenTitan - **LLMPirate** explores IP security implications - **C2HLSC** bridges software-to-hardware design gaps - **Masala-CHAI** creates comprehensive SPICE netlist datasets
+
+[PAUSE]
+
+What sets our approach apart is the seamless integration of natural language processing with formal verification methods. We're not just automating existing processes - we're fundamentally reimagining how designers interact with hardware description languages, making chip design more accessible, efficient, and reliable.
+
+[PAUSE]
+
+Our research demonstrates significant improvements in design productivity, error reduction, and accessibility for both novice and expert designers. By leveraging the power of Large Language Models, we're democratizing chip design while maintaining the rigor and precision that modern semiconductor applications demand.
+
+[PAUSE]
+
+Join us as we explore these groundbreaking technologies that are shaping the future of chip design. Each module in our comprehensive suite offers unique capabilities, from automated code generation to sophisticated verification frameworks. Welcome to the future of AI-driven hardware design.

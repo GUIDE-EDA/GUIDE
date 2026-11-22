@@ -1,0 +1,3 @@
+# Impact (120-150s)
+
+Our research demonstrates significant improvements in design productivity, error reduction, and accessibility for both novice and expert designers. By leveraging the power of Large Language Models, we're democratizing chip design while maintaining the rigor and precision that modern semiconductor applications demand.
