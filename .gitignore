@@ -15,3 +15,8 @@ testing/
 *.snm
 *.toc
 
+# Local LaTeX workspaces. Their compiled deliverables are published from the
+# parent FinalProjects and Syllabus directories instead.
+Course/FinalProjects/latex/
+Course/Syllabus/latex/
+
